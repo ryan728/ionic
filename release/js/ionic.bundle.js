@@ -39986,6 +39986,7 @@ function($scope, scrollViewOptions, $timeout, $window, $$scrollValueCache, $loca
   this._setRefresher = function(refresherScope, refresherElement) {
     var refresher = this.refresher = refresherElement;
     var refresherHeight = self.refresher.clientHeight || 60;
+
     scrollView.activatePullToRefresh(refresherHeight, function() {
       // activateCallback
       refresher.classList.add('active');
@@ -43237,10 +43238,13 @@ IonicModule
       '<div class="ionic-refresher-content" ' +
       'ng-class="{\'ionic-refresher-with-text\': pullingText || refreshingText}">' +
         '<div class="icon-pulling" ng-class="{\'pulling-rotation-disabled\':disablePullingRotation}">' +
-          '<i class="icon {{pullingIcon}}"></i>' +
+          '<div class="icon {{pullingIcon}}"></div>' +
         '</div>' +
-        '<div class="text-pulling" ng-bind-html="pullingText"></div>' +
-        '<i class="icon {{refreshingIcon}} icon-refreshing"></i>' +
+        '<div class="text-pulling">' + 
+          '<div id="pulling-text-div" ng-bind-html="pullingText"></div>' + 
+          '<div id="release-text-div" ng-bind-html="releaseText"></div>' + 
+        '</div>' +
+        '<div class="icon {{refreshingIcon}} icon-refreshing"></div>' +
         '<div class="text-refreshing" ng-bind-html="refreshingText"></div>' +
       '</div>' +
     '</div>',
@@ -43255,13 +43259,14 @@ IonicModule
         $ionicBind($scope, $attrs, {
           pullingIcon: '@',
           pullingText: '@',
+          releaseText: '@',
           refreshingIcon: '@',
           refreshingText: '@',
           disablePullingRotation: '@',
           $onRefresh: '&onRefresh',
           $onPulling: '&onPulling'
         });
-
+        
         scrollCtrl._setRefresher($scope, $element[0]);
         $scope.$on('scroll.refreshComplete', function() {
           $scope.$evalAsync(function() {
